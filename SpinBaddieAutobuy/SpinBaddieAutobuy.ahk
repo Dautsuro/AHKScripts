@@ -1,4 +1,4 @@
-VERSION := "1.2.0"
+VERSION := "1.2.2"
 
 SendMode "Event"
 
@@ -50,7 +50,7 @@ ProcessSearch(target) {
             return true
         }
 
-        Send "{WheelDown}"
+        SafeSend "{WheelDown}"
         scrollDownCount++
         retry++
         Sleep DELAY_AFTER_ACTION
@@ -89,7 +89,7 @@ ScrollBackUp() {
     scrollLimit := scrollDownCount
 
     Loop scrollDownCount {
-        Send "{WheelUp}"
+        SafeSend "{WheelUp}"
         Sleep DELAY_AFTER_ACTION / 10
     }
 
@@ -130,7 +130,7 @@ refillCoins() {
 
 
     Loop scrollHardLimit {
-        Send "{WheelUp}"
+        SafeSend "{WheelUp}"
     }
 
     Sleep DELAY_AFTER_ACTION * 10
@@ -139,4 +139,20 @@ refillCoins() {
         Click firstDicePos.x, firstDicePos.y
         Sleep DELAY_AFTER_ACTION
     }
+}
+
+SafeSend(key) {
+    searchArea := {
+        x1: Min(DETECTION_TARGETS.stock.x1, DETECTION_TARGETS.buyButton.x1),
+        y1: Min(DETECTION_TARGETS.stock.y1, DETECTION_TARGETS.buyButton.y1),
+        x2: Max(DETECTION_TARGETS.stock.x2, DETECTION_TARGETS.buyButton.x2),
+        y2: Max(DETECTION_TARGETS.stock.y2, DETECTION_TARGETS.buyButton.y2)
+    }
+
+    MouseGetPos &mousePosX, &mousePosY
+
+    if (mousePosX < searchArea.x1 or mousePosX > searchArea.x2) or (mousePosY < searchArea.y1 or mousePosY > searchArea.y2)
+        MouseMove shopWindowPos.x, shopWindowPos.y
+
+    Send key
 }
