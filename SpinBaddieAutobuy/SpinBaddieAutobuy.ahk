@@ -1,4 +1,4 @@
-VERSION := "1.1.0"
+VERSION := "1.2.0"
 
 SendMode "Event"
 
@@ -9,7 +9,16 @@ DETECTION_TARGETS := {
 
 DELAY_AFTER_ACTION := 100
 scrollDownCount := 0
-scrollLimit := 110 ; Current observed limit (may change with each game update, adjust if needed).
+scrollHardLimit := 110 ; Current observed limit (may change with each game update, adjust if needed).
+scrollLimit := scrollHardLimit 
+failedRetryCount := 0
+
+closeShopPos := { x: 1358, y: 273 }
+potionPos := { x: 541, y: 1016 }
+drinkPotionPos := { x: 1295, y: 722 }
+inventoryPos := { x: 1828, y: 33 }
+placeBestPos := { x: 1049, y: 477 }
+shopWindowPos := { x: 946, y: 562 }
 
 F1::StartSearch
 F12::ExitApp
@@ -24,8 +33,15 @@ StartSearch() {
 }
 
 ProcessSearch(target) {
-    global scrollDownCount
+    global scrollDownCount, failedRetryCount, scrollLimit
     retry := 0
+
+    if (failedRetryCount >= 5) {
+        refillCoins
+        failedRetryCount := 0
+        scrollDownCount := 0
+        scrollLimit := scrollHardLimit
+    }
 
     while not PixelSearch(&x, &y, target.x1, target.y1, target.x2, target.y2, target.color, 5) {
         if IsEndOfList() and target.name == "stock" {
@@ -39,10 +55,13 @@ ProcessSearch(target) {
         Sleep DELAY_AFTER_ACTION
         RandomJump
 
-        if retry >= 5 and target.name == "buyButton"
+        if retry >= 5 and target.name == "buyButton" {
+            failedRetryCount++
             return
+        }
     }
 
+    failedRetryCount := 0
     Click x, y + 5
     Sleep DELAY_AFTER_ACTION
 
@@ -81,4 +100,38 @@ ScrollBackUp() {
 RandomJump() {
     if Random(1, 100) <= 5
         Send "{Space}"
+}
+
+refillCoins() {
+    Click closeShopPos.x, closeShopPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click potionPos.x, potionPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click drinkPotionPos.x, drinkPotionPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click potionPos.x, potionPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click inventoryPos.x, inventoryPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click placeBestPos.x, placeBestPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Click inventoryPos.x, inventoryPos.y
+    Sleep DELAY_AFTER_ACTION * 5
+
+    Send "e"
+    MouseMove shopWindowPos.x, shopWindowPos.y
+    Sleep DELAY_AFTER_ACTION * 50
+
+
+    Loop scrollHardLimit {
+        Send "{WheelUp}"
+    }
+
+    Sleep DELAY_AFTER_ACTION * 10
 }
