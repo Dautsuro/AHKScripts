@@ -1,4 +1,4 @@
-VERSION := "1.0.0"
+VERSION := "1.1.0"
 
 SendMode "Event"
 
@@ -60,7 +60,9 @@ IsEndOfList() {
         return true
 
     area := DETECTION_TARGETS.stock
-    return ImageSearch(&x, &y, area.x1, area.y1, area.x2, area.y2, "*20 assets/last-dice.png")
+    isLastDice := ImageSearch(&x, &y, area.x1, area.y1, area.x2, area.y2, "*20 assets/last-dice.png")
+    isLastPotion := ImageSearch(&x, &y, area.x1, area.y1, area.x2, area.y2, "*20 assets/last-potion.png")
+    return isLastDice or isLastPotion
 }
 
 ScrollBackUp() {
