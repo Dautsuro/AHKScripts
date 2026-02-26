@@ -19,6 +19,7 @@ drinkPotionPos := { x: 1295, y: 722 }
 inventoryPos := { x: 1828, y: 33 }
 placeBestPos := { x: 1049, y: 477 }
 shopWindowPos := { x: 946, y: 562 }
+firstDicePos := { x: 960, y: 508 }
 
 F1::StartSearch
 F12::ExitApp
@@ -36,7 +37,7 @@ ProcessSearch(target) {
     global scrollDownCount, failedRetryCount, scrollLimit
     retry := 0
 
-    if (failedRetryCount >= 5) {
+    if (failedRetryCount >= 3) {
         refillCoins
         failedRetryCount := 0
         scrollDownCount := 0
@@ -61,7 +62,6 @@ ProcessSearch(target) {
         }
     }
 
-    failedRetryCount := 0
     Click x, y + 5
     Sleep DELAY_AFTER_ACTION
 
@@ -134,4 +134,9 @@ refillCoins() {
     }
 
     Sleep DELAY_AFTER_ACTION * 10
+
+    Loop 2 {
+        Click firstDicePos.x, firstDicePos.y
+        Sleep DELAY_AFTER_ACTION
+    }
 }
