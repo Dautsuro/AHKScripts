@@ -1,4 +1,4 @@
-VERSION := "1.2.2"
+VERSION := "1.2.3"
 
 SendMode "Event"
 
@@ -9,7 +9,7 @@ DETECTION_TARGETS := {
 
 DELAY_AFTER_ACTION := 100
 scrollDownCount := 0
-scrollHardLimit := 110 ; Current observed limit (may change with each game update, adjust if needed).
+scrollHardLimit := 115 ; Current observed limit (may change with each game update, adjust if needed).
 scrollLimit := scrollHardLimit 
 failedRetryCount := 0
 
